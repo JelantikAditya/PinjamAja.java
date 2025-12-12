@@ -1,0 +1,80 @@
+/* File: Web Pages/css/style.css */
+
+:root {
+  --font-size: 16px;
+  --background: #ffffff;
+  --foreground: #030213; /* oklch converted to hex for compatibility */
+  --card: #ffffff;
+  --card-foreground: #030213;
+  --popover: #ffffff;
+  --popover-foreground: #030213;
+  --primary: #030213;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f7;
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #a1a1aa;
+  --radius: 0.625rem;
+}
+
+/* Dark Mode Variables */
+.dark {
+  --background: #030213;
+  --foreground: #ffffff;
+  --card: #030213;
+  --card-foreground: #ffffff;
+  --popover: #030213;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #030213;
+  --secondary: #27272a;
+  --secondary-foreground: #ffffff;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #ffffff;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #ffffff;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #a1a1aa;
+}
+
+/* Basic Resets (Pengganti @layer base) */
+* {
+  border-color: var(--border);
+  outline-color: rgba(161, 161, 170, 0.5); /* ring color with opacity */
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--font-size);
+  font-family: sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography Defaults */
+h1 { font-size: 1.5rem; font-weight: var(--font-weight-medium); }
+h2 { font-size: 1.25rem; font-weight: var(--font-weight-medium); }
+h3 { font-size: 1.125rem; font-weight: var(--font-weight-medium); }
+h4 { font-size: 1rem; font-weight: var(--font-weight-medium); }
+button, input, label { font-size: 1rem; }
