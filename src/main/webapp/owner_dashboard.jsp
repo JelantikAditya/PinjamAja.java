@@ -54,6 +54,20 @@
     <title>Dashboard Pemilik - PinjamAja</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2B6CB0',
+                        accent: '#FFD54A',
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
         .tab-active { border-bottom: 2px solid #2B6CB0; color: #2B6CB0; font-weight: 600; }
         .tab-inactive { color: #6B7280; }
@@ -62,6 +76,42 @@
     </style>
 </head>
 <body class="bg-[#F6F7FB] text-slate-800 font-sans min-h-screen">
+
+<!-- NAVBAR -->
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="landing.jsp" class="flex items-center gap-2 group">
+            <div class="bg-primary text-white p-1.5 rounded-lg">
+                <i data-lucide="hexagon" class="w-5 h-5 fill-current"></i>
+            </div>
+            <span class="text-xl font-bold text-primary tracking-tight">PinjamAja</span>
+        </a>
+
+        <div class="flex items-center gap-6">
+            <a href="owner_dashboard.jsp" class="text-sm font-semibold text-gray-900 border-b-2 border-primary py-5">
+                Dashboard
+            </a>
+            
+            <div class="relative">
+                <button onclick="toggleProfile()" class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-primary hover:ring-2 hover:ring-primary/20 transition-all focus:outline-none">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                </button>
+
+                <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+                    <div class="px-4 py-3 border-b border-gray-100 mb-2">
+                        <p class="text-sm font-bold text-gray-900"><%= userName %></p>
+                        <p class="text-xs text-gray-500 truncate">Owner - PinjamAja</p>
+                    </div>
+                    
+                    <a href="auth.jsp?logout=true" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer w-full text-left">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        Keluar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 
 <div class="container mx-auto px-4 py-8">
     
@@ -273,7 +323,7 @@
                                 <a href="item_form.jsp?action=edit&itemId=<%= item.get("id") %>" class="h-8 w-8 bg-white/90 shadow-sm rounded-md flex items-center justify-center hover:bg-white text-gray-600">
                                     <i data-lucide="edit-2" class="h-4 w-4"></i>
                                 </a>
-                                <form action="barang" method="POST" style="display: inline;" onsubmit="return confirm('Hapus barang ini?')">
+                                <form action="<%= request.getContextPath() %>/barang" method="POST" style="display: inline;" onsubmit="return confirm('Hapus barang ini?')">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="itemId" value="<%= item.get("id") %>">
                                     <button type="submit" class="h-8 w-8 bg-red-500/90 shadow-sm rounded-md flex items-center justify-center hover:bg-red-600 text-white">
@@ -324,6 +374,22 @@
         activeBtn.classList.add('tab-active');
         activeBtn.classList.remove('tab-inactive');
     }
+
+    // Profile dropdown toggle
+    function toggleProfile() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const profileBtn = event.target.closest('button');
+        const dropdown = document.getElementById('profileDropdown');
+        
+        if (!profileBtn && !dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
 </script>
 
 </body>
