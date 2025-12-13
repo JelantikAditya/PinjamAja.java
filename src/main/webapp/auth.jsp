@@ -1,4 +1,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    // Handle logout
+    String logout = request.getParameter("logout");
+    if ("true".equals(logout)) {
+        session.invalidate();
+        response.sendRedirect("landing.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
