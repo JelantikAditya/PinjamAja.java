@@ -44,8 +44,8 @@
             <h2 class="text-2xl font-bold"><%= "edit".equals(action) ? "Edit Barang" : "Tambah Barang Baru" %></h2>
         </div>
         
-        <form action="barang" method="POST">
-            <input type="hidden" name="action" value="<%= action %>">
+        <form action="<%= request.getContextPath() %>/barang" method="POST">
+            <input type="hidden" name="action" value="<%= "edit".equals(action) ? "update" : "add" %>">
             <% if ("edit".equals(action)) { %>
                 <input type="hidden" name="itemId" value="<%= itemId %>">
             <% } %>
@@ -87,7 +87,7 @@
             
             <div class="flex justify-between mt-6">
                 <a href="owner_dashboard.jsp" class="px-4 py-2 border rounded-md hover:bg-gray-50 transition-colors text-sm font-medium">Batal</a>
-                <button type="submit" class="px-4 py-2 bg-accent text-primary font-bold rounded-md hover:bg-accentHover transition-colors text-sm">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-colors text-sm">
                     <%= "edit".equals(action) ? "Simpan Perubahan" : "Simpan Barang" %>
                 </button>
             </div>

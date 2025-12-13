@@ -84,18 +84,25 @@ public boolean updateBarang(String itemId, String name, String category, String 
     String sql = "UPDATE items SET name = ?, category = ?, description = ?, price_per_day = ?, image_url = ? " +
                  "WHERE id = ? AND owner_id = ?";
     
-       try (Connection conn = DBConnection.getConnection();
-           PreparedStatement ps = conn.prepareStatement(sql)) {
+    System.out.println("=== UPDATE QUERY ===");
+    System.out.println("SQL: " + sql);
+    System.out.println("Parameters: name=" + name + ", category=" + category + ", pricePerDay=" + pricePerDay + 
+                       ", itemId=" + itemId + ", ownerId=" + ownerId);
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
         
-       ps.setString(1, name);
-       ps.setString(2, category);
-       ps.setString(3, description);
-       ps.setDouble(4, pricePerDay);
-       ps.setString(5, imageUrl);
-       ps.setString(6, itemId);
-       ps.setString(7, ownerId != null ? ownerId.trim() : ownerId);
+        ps.setString(1, name);
+        ps.setString(2, category);
+        ps.setString(3, description);
+        ps.setDouble(4, pricePerDay);
+        ps.setString(5, imageUrl);
+        ps.setString(6, itemId);
+        ps.setString(7, ownerId);
         
-        return ps.executeUpdate() > 0;
+        int rows = ps.executeUpdate();
+        System.out.println("UPDATE Result: Rows updated = " + rows);
+        return rows > 0;
     }
 }
 
