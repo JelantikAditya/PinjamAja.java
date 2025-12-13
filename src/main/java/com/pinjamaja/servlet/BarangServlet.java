@@ -1,15 +1,20 @@
 package com.pinjamaja.servlet;
 
-import com.pinjamaja.dao.BarangDAO;
-import com.pinjamaja.util.DBConnection;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.pinjamaja.dao.BarangDAO;
+import com.pinjamaja.util.DBConnection;
 
 @WebServlet("/barang")
 public class BarangServlet extends HttpServlet {
@@ -26,6 +31,8 @@ public class BarangServlet extends HttpServlet {
             throws ServletException, IOException {
         
         String action = request.getParameter("action");
+        System.out.println("=== BARANG SERVLET doPost ===");
+        System.out.println("Action: " + action);
         
         try {
             if ("add".equals(action)) {
@@ -34,6 +41,9 @@ public class BarangServlet extends HttpServlet {
                 handleDelete(request, response);
             } else if ("update".equals(action)) {
                 handleUpdate(request, response);
+            } else {
+                System.err.println("ERROR: Unknown action in doPost: " + action);
+                response.sendRedirect("owner_dashboard.jsp?error=invalid_action");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,20 +136,51 @@ public class BarangServlet extends HttpServlet {
             return;
         }
         
-        String ownerId = (String) session.getAttribute("userId");
-        String itemId = request.getParameter("itemId");
-        String name = request.getParameter("name");
-        String category = request.getParameter("category");
-        String description = request.getParameter("description");
-        double pricePerDay = Double.parseDouble(request.getParameter("pricePerDay"));
-        String imageUrl = request.getParameter("imageUrl");
-        
-        boolean success = barangDAO.updateBarang(itemId, name, category, description, pricePerDay, imageUrl, ownerId);
-        
-        if (success) {
-            response.sendRedirect("owner_dashboard.jsp?success=item_updated&tab=items");
-        } else {
-            response.sendRedirect("owner_dashboard.jsp?error=update_failed");
+        try {
+            String ownerId = (String) session.getAttribute("userId");
+            if (ownerId != null) {
+                ownerId = ownerId.trim();
+            }
+            
+            String itemId = request.getParameter("itemId");
+            String name = request.getParameter("name");
+            String category = request.getParameter("category");
+            String description = request.getParameter("description");
+            String pricePerDayStr = request.getParameter("pricePerDay");
+            String imageUrl = request.getParameter("imageUrl");
+            
+            // Validate inputs
+            if (itemId == null || itemId.isEmpty() || name == null || name.isEmpty() || 
+                category == null || category.isEmpty() || description == null || description.isEmpty() || 
+                pricePerDayStr == null || pricePerDayStr.isEmpty() || imageUrl == null || imageUrl.isEmpty()) {
+                System.err.println("ERROR: Missing required fields");
+                response.sendRedirect("owner_dashboard.jsp?error=invalid_input");
+                return;
+            }
+            
+            double pricePerDay = Double.parseDouble(pricePerDayStr);
+            
+            // DEBUG: Cek data di console
+            System.out.println("=== UPDATE BARANG DEBUG ===");
+            System.out.println("Owner ID: " + ownerId);
+            System.out.println("Item ID: " + itemId);
+            System.out.println("Name: " + name);
+            System.out.println("Category: " + category);
+            System.out.println("Price: " + pricePerDay);
+            
+            boolean success = barangDAO.updateBarang(itemId, name, category, description, pricePerDay, imageUrl, ownerId);
+            
+            System.out.println("Update Result: " + success);
+            
+            if (success) {
+                // 🔥 PENTING: Redirect ke dashboard, bukan ke servlet
+                response.sendRedirect("owner_dashboard.jsp?success=item_updated&tab=items");
+            } else {
+                response.sendRedirect("owner_dashboard.jsp?error=update_failed&tab=items");
+            }
+        } catch (NumberFormatException e) {
+            System.err.println("ERROR: Invalid price format - " + e.getMessage());
+            response.sendRedirect("owner_dashboard.jsp?error=invalid_price");
         }
     }
     

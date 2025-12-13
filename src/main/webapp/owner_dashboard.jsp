@@ -84,16 +84,26 @@
     %>
         <div class="mb-4 p-3 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm flex items-center gap-2">
             <i data-lucide="check-circle" class="w-4 h-4"></i>
-            <% if ("item_saved".equals(success)) { %>Barang berhasil disimpan!<% } %>
-            <% if ("item_deleted".equals(success)) { %>Barang berhasil dihapus!<% } %>
+            <% if ("item_saved".equals(success)) { %>Barang berhasil disimpan!<% } 
+               if ("item_added".equals(success)) { %>Barang baru berhasil ditambahkan!<% }
+               if ("item_updated".equals(success)) { %>Barang berhasil diperbarui!<% }
+               if ("item_deleted".equals(success)) { %>Barang berhasil dihapus!<% } %>
         </div>
     <%
         } else if (error != null) {
     %>
         <div class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm flex items-center gap-2">
             <i data-lucide="alert-circle" class="w-4 h-4"></i>
-            <% if ("save_failed".equals(error)) { %>Gagal menyimpan barang.<% } %>
-            <% if ("not_owner".equals(error)) { %>Akses ditolak.<% } %>
+            <% if ("save_failed".equals(error)) { %>Gagal menyimpan barang.<% }
+               else if ("add_failed".equals(error)) { %>Gagal menambahkan barang baru.<% }
+               else if ("update_failed".equals(error)) { %>Gagal memperbarui barang.<% }
+               else if ("delete_failed".equals(error)) { %>Gagal menghapus barang.<% }
+               else if ("database".equals(error)) { %>Terjadi kesalahan database.<% }
+               else if ("invalid_action".equals(error)) { %>Aksi tidak valid.<% }
+               else if ("invalid_price".equals(error)) { %>Harga per hari harus berupa angka valid.<% }
+               else if ("invalid_input".equals(error)) { %>Semua field harus diisi dengan benar.<% }
+               else if ("not_found".equals(error)) { %>Barang tidak ditemukan.<% }
+               else if ("not_owner".equals(error)) { %>Akses ditolak.<% } %>
         </div>
     <%
         }
