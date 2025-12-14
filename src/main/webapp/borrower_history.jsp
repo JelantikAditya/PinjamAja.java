@@ -93,6 +93,31 @@
     <div class="container mx-auto px-4 py-8 max-w-5xl">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Pesanan Saya</h1>
         
+        <!-- SUCCESS/ERROR ALERTS -->
+        <%
+            String success = request.getParameter("success");
+            String error = request.getParameter("error");
+            if (success != null) {
+        %>
+            <div class="mb-4 p-3 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <% if ("booked".equals(success)) { %>Pesanan berhasil dibuat! Tunggu persetujuan dari pemilik barang.<% }
+                   else if ("payment_done".equals(success)) { %>Pembayaran berhasil! Terima kasih telah menggunakan PinjamAja.<% } %>
+            </div>
+        <%
+            } else if (error != null) {
+        %>
+            <div class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                <% if ("booking_failed".equals(error)) { %>Gagal membuat pesanan. Silakan coba lagi.<% }
+                   else if ("payment_failed".equals(error)) { %>Gagal memproses pembayaran. Silakan coba lagi.<% }
+                   else if ("invalid_payment".equals(error)) { %>Data pembayaran tidak valid.<% }
+                   else if ("database_error".equals(error)) { %>Terjadi kesalahan database.<% } %>
+            </div>
+        <%
+            }
+        %>
+        
         <% if (myBookings.isEmpty()) { %>
             <div class="bg-white rounded-lg border border-dashed border-gray-300 p-12 text-center">
                 <i data-lucide="package" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
@@ -151,7 +176,11 @@
                             <div class="flex justify-between items-center mt-2">
                                 <p class="font-bold text-primary text-lg"><%= rpFormat.format(booking.get("totalPrice")) %></p>
                                 
-                                <% if("COMPLETED".equals(status)) { %>
+                                <% if("APPROVED".equals(status)) { %>
+                                    <button onclick="openPaymentModal('<%= booking.get("id") %>', '<%= booking.get("itemTitle") %>', '<%= booking.get("totalPrice") %>')" class="inline-flex items-center justify-center rounded-lg text-sm font-medium bg-primary text-white hover:bg-blue-700 h-9 px-4 gap-2 transition-colors">
+                                        <i data-lucide="credit-card" class="w-4 h-4"></i> Lakukan Pembayaran
+                                    </button>
+                                <% } else if("COMPLETED".equals(status)) { %>
                                     <button onclick="openReviewModal('<%= booking.get("itemTitle") %>')" class="inline-flex items-center justify-center rounded-lg text-sm font-medium border border-gray-300 bg-white hover:bg-gray-50 h-9 px-4 gap-2 transition-colors">
                                         <i data-lucide="star" class="w-4 h-4"></i> Berikan Ulasan
                                     </button>
@@ -163,6 +192,60 @@
                 <% } %>
             </div>
         <% } %>
+    </div>
+    
+    <!-- PAYMENT MODAL -->
+    <div id="paymentModal" class="fixed inset-0 z-[60] hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-lg border p-6 relative">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h2 class="text-lg font-semibold">Konfirmasi Pembayaran</h2>
+                    <p class="text-sm text-gray-500">Selesaikan pembayaran sewa Anda</p>
+                </div>
+                <button onclick="closePaymentModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <form action="payment" method="POST" id="paymentForm">
+                <input type="hidden" name="action" value="process">
+                <input type="hidden" name="bookingId" id="paymentBookingId">
+                <input type="hidden" name="amount" id="paymentAmountInput">
+                
+                <div class="border rounded-lg p-4 bg-gray-50 mb-4">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Barang:</span>
+                        <span class="font-medium text-gray-900" id="paymentItemName">-</span>
+                    </div>
+                    <div class="border-t pt-2 mt-2 flex justify-between">
+                        <span class="font-medium text-gray-900">Total Pembayaran:</span>
+                        <span class="text-lg font-bold text-primary" id="paymentAmount">Rp 0</span>
+                    </div>
+                </div>
+                
+                <div class="grid gap-3 mb-4">
+                    <div>
+                        <label class="text-sm font-medium block mb-2">Metode Pembayaran</label>
+                        <select name="paymentMethod" id="paymentMethod" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Pilih Metode Pembayaran</option>
+                            <option value="credit_card">Kartu Kredit / Debit</option>
+                            <option value="bank_transfer">Transfer Bank</option>
+                            <option value="e_wallet">E-Wallet</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-sm text-blue-700">
+                    <i data-lucide="info" class="w-4 h-4 inline mr-2"></i>
+                    Pembayaran akan diproses segera setelah Anda mengkonfirmasi.
+                </div>
+                
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                    <button type="button" onclick="closePaymentModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 font-medium">Bayar Sekarang</button>
+                </div>
+            </form>
+        </div>
     </div>
     
     <!-- REVIEW MODAL -->
@@ -196,6 +279,7 @@
         lucide.createIcons();
         
         let currentRating = 0;
+        let currentPaymentBookingId = '';
         
         function toggleProfile() {
             document.getElementById('profileDropdown').classList.toggle('hidden');
@@ -208,6 +292,33 @@
                 dropdown.classList.add('hidden');
             }
         });
+        
+        // PAYMENT MODAL FUNCTIONS
+        function openPaymentModal(bookingId, itemTitle, totalPrice) {
+            currentPaymentBookingId = bookingId;
+            document.getElementById('paymentBookingId').value = bookingId;
+            document.getElementById('paymentItemName').textContent = itemTitle;
+            
+            // Format harga dengan Intl API
+            const formatter = new Intl.NumberFormat('id-ID', { 
+                style: 'currency', 
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            document.getElementById('paymentAmount').textContent = formatter.format(totalPrice);
+            // set hidden amount in raw numeric form for server
+            const rawAmount = Number(totalPrice);
+            document.getElementById('paymentAmountInput').value = isNaN(rawAmount) ? '' : rawAmount;
+            
+            document.getElementById('paymentMethod').value = '';
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+        
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            currentPaymentBookingId = '';
+        }
         
         function openReviewModal(itemTitle) {
             document.getElementById('reviewItemTitle').innerText = itemTitle;

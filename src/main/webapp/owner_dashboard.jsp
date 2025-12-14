@@ -30,11 +30,19 @@
 
     for (Map<String, Object> booking : myBookings) {
         String status = (String) booking.get("status");
+        String paymentStatus = (String) booking.get("paymentStatus");
+        if (paymentStatus == null) paymentStatus = "UNPAID";
+        
         if ("PENDING".equals(status)) {
             pendingBookings.add(booking);
         } else if ("APPROVED".equals(status) || "ONGOING".equals(status)) {
             activeRentals.add(booking);
         } else if ("COMPLETED".equals(status)) {
+            activeRentals.add(booking);
+        }
+        
+        // Hitung earnings jika pembayaran sudah lunas
+        if ("PAID".equals(paymentStatus)) {
             totalEarnings += (Double) booking.get("totalPrice");
         }
     }
@@ -218,7 +226,14 @@
                         <div class="text-center py-8 text-gray-500">Tidak ada permintaan tertunda saat ini.</div>
                     <% } else { %>
                         <div class="space-y-4">
-                            <% for (Map<String, Object> bData : pendingBookings) { %>
+                            <% for (Map<String, Object> bData : pendingBookings) { 
+                                String paymentStatus = (String) bData.get("paymentStatus");
+                                if (paymentStatus == null) paymentStatus = "UNPAID";
+                                String paymentBadgeClass = "UNPAID".equals(paymentStatus) 
+                                    ? "bg-red-50 text-red-700 border border-red-200" 
+                                    : "bg-green-50 text-green-700 border border-green-200";
+                                String paymentLabel = "UNPAID".equals(paymentStatus) ? "Belum Dibayar" : "Sudah Dibayar";
+                            %>
                             <div class="flex flex-col md:flex-row items-center justify-between p-4 border rounded-lg bg-white">
                                 <div class="flex items-center gap-4 mb-4 md:mb-0 w-full">
                                     <img src="<%= bData.get("itemImageUrl") %>" class="w-16 h-16 rounded-lg object-cover bg-gray-100" />
@@ -229,6 +244,10 @@
                                             <span><%= bData.get("startDate") %> s/d <%= bData.get("endDate") %></span>
                                             <span>•</span>
                                             <span class="text-green-600 font-medium"><%= rpFormat.format(bData.get("totalPrice")) %></span>
+                                            <span>•</span>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold <%= paymentBadgeClass %>">
+                                                <%= paymentLabel %>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
