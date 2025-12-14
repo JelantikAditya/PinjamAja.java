@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import com.pinjamaja.dao.BookingDAO;
 import com.pinjamaja.dao.PaymentDAO;
+import com.pinjamaja.dao.UserDAO;
+import java.util.Map;
 import java.util.UUID;
 
 @WebServlet("/payment")
@@ -15,11 +17,13 @@ public class PaymentServlet extends HttpServlet {
     
     private BookingDAO bookingDAO;
     private PaymentDAO paymentDAO;
+    private UserDAO userDAO;
     
     @Override
     public void init() throws ServletException {
         bookingDAO = new BookingDAO();
         paymentDAO = new PaymentDAO();
+        userDAO = new UserDAO();
     }
     
     @Override
@@ -66,21 +70,39 @@ public class PaymentServlet extends HttpServlet {
             return;
         }
 
-        // Buat record pembayaran di tabel payments, lalu update booking.payment_status
+        // Buat record pembayaran di tabel payments, update booking.payment_status, dan tambahkan saldo owner
         try {
+            // ambil detail booking untuk mengetahui owner dan total
+            Map<String, Object> booking = bookingDAO.getBookingById(bookingId);
+            if (booking == null) {
+                response.sendRedirect("borrower_history.jsp?error=not_found");
+                return;
+            }
+
+            String ownerId = (String) booking.get("ownerId");
+            double paidAmount = amount; // use submitted amount
+
             String paymentId = "PM" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-            boolean created = paymentDAO.createPayment(paymentId, bookingId, amount, paymentMethod, borrowerId);
+            boolean created = paymentDAO.createPayment(paymentId, bookingId, paidAmount, paymentMethod, borrowerId);
             if (!created) {
                 response.sendRedirect("borrower_history.jsp?error=payment_failed");
                 return;
             }
 
-            boolean success = bookingDAO.updatePaymentStatus(bookingId, "PAID");
-            if (success) {
-                response.sendRedirect("borrower_history.jsp?success=payment_done");
-            } else {
+            boolean updated = bookingDAO.updatePaymentStatus(bookingId, "PAID");
+            if (!updated) {
                 response.sendRedirect("borrower_history.jsp?error=payment_failed");
+                return;
             }
+
+            // credit owner balance
+            boolean credited = userDAO.addToBalance(ownerId, paidAmount);
+            if (!credited) {
+                // log but still consider payment processed; redirect with warning
+                System.err.println("Failed to credit owner balance for ownerId=" + ownerId);
+            }
+
+            response.sendRedirect("borrower_history.jsp?success=payment_done");
         } catch (SQLException e) {
             e.printStackTrace();
             response.sendRedirect("borrower_history.jsp?error=database_error");

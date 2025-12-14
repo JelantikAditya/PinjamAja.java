@@ -1,7 +1,14 @@
 package com.pinjamaja.dao;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.pinjamaja.util.DBConnection;
 
 public class BookingDAO {
@@ -159,6 +166,28 @@ public class BookingDAO {
             }
         }
         return list;
+    }
+
+    // === 7. GET BOOKING BY ID (DETAILS) ===
+    public Map<String, Object> getBookingById(String bookingId) throws SQLException {
+        String sql = "SELECT b.*, i.owner_id as owner_id, i.name as item_name, b.total_price " +
+                     "FROM bookings b JOIN items i ON b.item_id = i.id WHERE b.id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, bookingId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", rs.getString("id"));
+                m.put("ownerId", rs.getString("owner_id"));
+                m.put("itemName", rs.getString("item_name"));
+                m.put("totalPrice", rs.getDouble("total_price"));
+                m.put("status", rs.getString("status"));
+                try { m.put("paymentStatus", rs.getString("payment_status")); } catch (SQLException e) { m.put("paymentStatus", "UNPAID"); }
+                return m;
+            }
+            return null;
+        }
     }
 
 } // <--- END OF CLASS (Pastikan ini ada di paling akhir)

@@ -325,7 +325,7 @@
             </div>
         </div>
 
-        <!-- BARANG SAYA - INI YANG PENTING 🔥 -->
+        <!-- BARANG SAYA -->
         <div id="content-items" class="tab-content">
             <div class="flex justify-end mb-4">
                 <a href="item_form.jsp?action=add" class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-primary text-white hover:bg-blue-700 transition-colors shadow-sm">

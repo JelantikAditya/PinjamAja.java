@@ -1,8 +1,15 @@
 package com.pinjamaja.dao;
 
-import com.pinjamaja.model.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.pinjamaja.model.Admin;
+import com.pinjamaja.model.Borrower;
+import com.pinjamaja.model.Owner;
+import com.pinjamaja.model.User;
 import com.pinjamaja.util.DBConnection;
-import java.sql.*;
 
 public class UserDAO {
     
@@ -191,6 +198,17 @@ public class UserDAO {
                 return String.format("%s%03d", prefix, count);
             }
             return prefix + "001";
+        }
+    }
+
+    // Tambah saldo ke user (mis. owner) dengan menambahkan amount ke kolom balance
+    public boolean addToBalance(String userId, double amount) throws SQLException {
+        String sql = "UPDATE users SET balance = COALESCE(balance,0) + ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, amount);
+            ps.setString(2, userId);
+            return ps.executeUpdate() > 0;
         }
     }
 }
