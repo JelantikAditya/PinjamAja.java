@@ -137,7 +137,8 @@
             <% if ("item_saved".equals(success)) { %>Barang berhasil disimpan!<% } 
                if ("item_added".equals(success)) { %>Barang baru berhasil ditambahkan!<% }
                if ("item_updated".equals(success)) { %>Barang berhasil diperbarui!<% }
-               if ("item_deleted".equals(success)) { %>Barang berhasil dihapus!<% } %>
+               if ("item_deleted".equals(success)) { %>Barang berhasil dihapus!<% }
+               if ("action_taken".equals(success)) { %>Permintaan berhasil diproses!<% } %>
         </div>
     <%
         } else if (error != null) {
@@ -153,7 +154,8 @@
                else if ("invalid_price".equals(error)) { %>Harga per hari harus berupa angka valid.<% }
                else if ("invalid_input".equals(error)) { %>Semua field harus diisi dengan benar.<% }
                else if ("not_found".equals(error)) { %>Barang tidak ditemukan.<% }
-               else if ("not_owner".equals(error)) { %>Akses ditolak.<% } %>
+               else if ("not_owner".equals(error)) { %>Akses ditolak.<% }
+               else if ("action_failed".equals(error)) { %>Gagal memproses permintaan. Silakan coba lagi.<% } %>
         </div>
     <%
         }
@@ -231,15 +233,15 @@
                                     </div>
                                 </div>
                                 <div class="flex gap-2 w-full md:w-auto mt-4 md:mt-0">
-                                    <form action="BookingServlet" method="POST" style="display: inline;">
+                                    <form action="booking" method="POST" style="display: inline;" onsubmit="return confirm('Yakin ingin menolak permintaan ini?');">
                                         <input type="hidden" name="action" value="reject">
                                         <input type="hidden" name="bookingId" value="<%= bData.get("id") %>">
-                                        <button type="submit" class="px-4 py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-md text-sm font-medium">Tolak</button>
+                                        <button type="submit" class="px-4 py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-md text-sm font-medium transition-colors">Tolak</button>
                                     </form>
-                                    <form action="BookingServlet" method="POST" style="display: inline;">
+                                    <form action="booking" method="POST" style="display: inline;">
                                         <input type="hidden" name="action" value="approve">
                                         <input type="hidden" name="bookingId" value="<%= bData.get("id") %>">
-                                        <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium">Setujui</button>
+                                        <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors">Setujui</button>
                                     </form>
                                 </div>
                             </div>

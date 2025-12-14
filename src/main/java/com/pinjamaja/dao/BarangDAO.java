@@ -132,4 +132,37 @@ public Map<String, Object> getBarangById(String itemId, String ownerId) throws S
     }
     return null;
 }
+
+// GET ALL BARANG (untuk borrower melihat semua item yang tersedia)
+public List<Map<String, Object>> getAllBarang() throws SQLException {
+    List<Map<String, Object>> list = new ArrayList<>();
+    String sql = "SELECT i.id, i.name as title, i.category, i.description, i.price_per_day as pricePerDay, " +
+                 "i.image_url as imageUrl, i.rating, i.review_count as reviewCount, " +
+                 "u.name as ownerName, u.id as ownerId " +
+                 "FROM items i " +
+                 "JOIN users u ON i.owner_id = u.id " +
+                 "WHERE i.is_available = true " +
+                 "ORDER BY i.created_at DESC";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        
+        while (rs.next()) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", rs.getString("id"));
+            item.put("title", rs.getString("title"));
+            item.put("category", rs.getString("category"));
+            item.put("description", rs.getString("description"));
+            item.put("pricePerDay", rs.getDouble("pricePerDay"));
+            item.put("imageUrl", rs.getString("imageUrl"));
+            item.put("rating", rs.getDouble("rating"));
+            item.put("reviewCount", rs.getInt("reviewCount"));
+            item.put("ownerName", rs.getString("ownerName"));
+            item.put("ownerId", rs.getString("ownerId"));
+            list.add(item);
+        }
+    }
+    return list;
+}
 }
