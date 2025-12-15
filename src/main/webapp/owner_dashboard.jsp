@@ -310,11 +310,14 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <% if (st.equals("APPROVED") || st.equals("ONGOING")) { %>
-                                        <form action="BookingServlet" method="POST">
-                                            <input type="hidden" name="action" value="complete">
-                                            <input type="hidden" name="bookingId" value="<%= booking.get("id") %>">
-                                            <button type="submit" class="text-xs border px-2 py-1 rounded hover:bg-gray-100">Tandai Selesai</button>
-                                        </form>
+                                        <form action="${pageContext.request.contextPath}/booking" method="POST" style="display: inline;">
+                                        <input type="hidden" name="action" value="complete">
+                                        <input type="hidden" name="bookingId" value="<%= booking.get("id") %>">
+                                        <button type="submit" class="text-xs border px-2 py-1 rounded hover:bg-gray-100">
+                                            Tandai Selesai
+                                        </button>
+                                    </form>
+                                    </form>
                                     <% } %>
                                 </td>
                             </tr>

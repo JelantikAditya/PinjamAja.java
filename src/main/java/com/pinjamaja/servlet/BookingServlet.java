@@ -26,15 +26,19 @@ public class BookingServlet extends HttpServlet {
         
         String action = request.getParameter("action");
         
-        try {
+       try {
             if ("create".equals(action)) {
                 handleCreateBooking(request, response);
             } else if ("approve".equals(action) || "reject".equals(action)) {
                 handleOwnerAction(request, response);
+            } else if ("complete".equals(action)) { // 🔥 TAMBAHKAN INI
+                handleCompleteBooking(request, response);
+            } else {
+                response.sendRedirect("owner_dashboard.jsp?error=invalid_action");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("error.jsp?msg=Database error");
+            response.sendRedirect("owner_dashboard.jsp?error=database");
         }
     }
     
@@ -97,6 +101,29 @@ public class BookingServlet extends HttpServlet {
             response.sendRedirect("owner_dashboard.jsp?success=action_taken&tab=requests");
         } else {
             response.sendRedirect("owner_dashboard.jsp?error=action_failed&tab=requests");
+        }
+    }
+    
+     private void handleCompleteBooking(HttpServletRequest request, HttpServletResponse response) 
+            throws SQLException, IOException {
+        
+        HttpSession session = request.getSession(false);
+        if (session == null || !"OWNER".equals(session.getAttribute("userRole"))) {
+            response.sendRedirect("auth.jsp?error=not_owner");
+            return;
+        }
+        
+        String bookingId = request.getParameter("bookingId");
+        if (bookingId == null || bookingId.trim().isEmpty()) {
+            response.sendRedirect("owner_dashboard.jsp?error=invalid_input");
+            return;
+        }
+        
+        boolean success = bookingDAO.completeBooking(bookingId);
+        if (success) {
+            response.sendRedirect("owner_dashboard.jsp?success=action_taken&tab=rentals");
+        } else {
+            response.sendRedirect("owner_dashboard.jsp?error=action_failed&tab=rentals");
         }
     }
 }

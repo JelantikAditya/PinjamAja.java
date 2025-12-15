@@ -190,5 +190,21 @@ public class BookingDAO {
             return null;
         }
     }
+    
+    public boolean completeBooking(String bookingId) throws SQLException {
+    String sql = "UPDATE bookings SET status = 'COMPLETED' WHERE id = ? AND status IN ('APPROVED', 'ONGOING')";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        ps.setString(1, bookingId);
+        int affected = ps.executeUpdate();
+        
+        // Log untuk debugging
+        System.out.println("Complete booking " + bookingId + ": " + affected + " rows affected");
+        
+        return affected > 0;
+    }
+}
 
-} // <--- END OF CLASS (Pastikan ini ada di paling akhir)
+}
