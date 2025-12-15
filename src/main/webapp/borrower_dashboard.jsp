@@ -150,9 +150,9 @@
                             <span class="text-gray-400 font-normal">(<%= item.get("reviewCount") %>)</span>
                         </div>
                         
-                        <!-- 🔥 TOMBOL SEWA & KERANJANG 🔥 -->
+                        <!-- TOMBOL SEWA & KERANJANG -->
                         <div class="flex gap-2 mt-auto pt-3 border-t border-gray-50">
-                            <button onclick="openBookingModal('<%= item.get("id") %>', <%= item.get("pricePerDay") %>)" 
+                            <button onclick="openBookingModal('<%= item.get("id") %>', '<%= item.get("pricePerDay") %>', '<%= item.get("imageUrl") %>')"
                                     class="flex-1 py-2 bg-accent text-primary font-bold rounded-md hover:bg-accentHover transition-colors text-sm">
                                 <i data-lucide="shopping-cart" class="w-4 h-4 inline mr-1"></i>Sewa
                             </button>
@@ -173,52 +173,95 @@
         </div>
     </div>
         <!<!-- booking modal -->
-    <div id="bookingModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
-            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto">
-                <div class="mb-6">
-                    <h3 class="text-2xl font-bold text-gray-800">Formulir Sewa</h3>
-                    <p class="text-gray-500 text-sm">Lengkapi tanggal peminjaman Anda.</p>
-                </div>
+        <div id="bookingModal"
+             class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm
+                    flex items-center justify-center p-4">
 
-                <form action="booking" method="POST" class="flex flex-col h-full">
+            <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden">
+
+                <!-- FORM (HANYA SATU, TIDAK NESTED) -->
+                <form action="booking" method="POST"
+                      class="flex flex-col md:flex-row max-h-[90vh]">
+
+                    <!-- HIDDEN INPUT -->
                     <input type="hidden" name="action" value="create">
                     <input type="hidden" name="itemId" id="modalItemId">
                     <input type="hidden" name="pricePerDay" id="modalPricePerDay">
-                    
-                    <div class="space-y-5 flex-1">
+                    <input type="hidden" name="imageUrl" id="modalImageUrl">
+
+                    <!-- LEFT : FORM (LEBIH SEMPIT) -->
+                    <div class="w-full md:w-3/5 p-6 space-y-4 relative z-10">
+
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-                            <input type="date" name="startDate" id="modalStartDate" required 
-                                   class="w-full h-11 rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-                                   onchange="updateEndDateMin(); calculatePrice()">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai</label>
-                            <input type="date" name="endDate" id="modalEndDate" required 
-                                   class="w-full h-11 rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-                                   onchange="calculatePrice()">
+                            <h3 class="text-xl font-semibold text-gray-800">
+                                Formulir Sewa
+                            </h3>
+                            <p class="text-sm text-gray-500">
+                                Lengkapi tanggal peminjaman Anda.
+                            </p>
                         </div>
 
-                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mt-4">
-                            <div class="flex justify-between text-sm mb-2">
-                                <span class="text-gray-600">Durasi:</span>
-                                <span class="font-bold text-gray-800" id="rentalDays">0 hari</span>
-                            </div>
+                        <!-- TANGGAL MULAI -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Tanggal Mulai
+                            </label>
+                            <input type="date"
+                                   name="startDate"
+                                   id="modalStartDate"
+                                   required
+                                   class="w-full h-10 rounded-lg border border-gray-300 px-3
+                                          focus:ring-2 focus:ring-yellow-400">
+                        </div>
+
+                        <!-- TANGGAL SELESAI -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Tanggal Selesai
+                            </label>
+                            <input type="date"
+                                   name="endDate"
+                                   id="modalEndDate"
+                                   required
+                                   class="w-full h-10 rounded-lg border border-gray-300 px-3
+                                          focus:ring-2 focus:ring-yellow-400">
+                        </div>
+
+                        <!-- BUTTON -->
+                        <div class="flex gap-3 pt-6">
+                            <button type="button"
+                                    onclick="closeBookingModal()"
+                                    class="flex-1 h-10 rounded-lg border border-gray-300
+                                           text-gray-700 hover:bg-gray-100 text-sm">
+                                Batal
+                            </button>
+
+                            <button type="submit"
+                                    class="flex-1 h-10 rounded-lg bg-yellow-400
+                                           font-semibold hover:bg-yellow-500 text-sm">
+                                Ajukan Sewa
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="flex gap-3 mt-8 pt-4 border-t border-gray-100">
-                        <button type="button" onclick="closeBookingModal()" class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                            Batal
-                        </button>
-                        <button type="submit" class="flex-1 px-4 py-3 bg-accent text-primary font-bold rounded-lg hover:bg-yellow-400 transition-colors shadow-sm">
-                            Ajukan Sewa
-                        </button>
+
+                    <!-- RIGHT : IMAGE (TENGAH) -->
+                    <div class="hidden md:flex w-2/5 bg-white items-center justify-center">
+
+                        <div class="w-[85%] aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
+                            <img
+                                id="modalImageDisplay"
+                                src=""
+                                alt="Preview Barang"
+                                class="w-full h-full object-cover"
+                            >
+                        </div>
+
                     </div>
+
                 </form>
             </div>
+        </div>
+
     </div>
 
     <script>
@@ -282,9 +325,23 @@
         });
         
         // BOOKING MODAL
-        function openBookingModal(itemId, pricePerDay, ) {
+        function openBookingModal(itemId, pricePerDay, imageUrl) {
             document.getElementById('modalItemId').value = itemId;
             document.getElementById('modalPricePerDay').value = pricePerDay;
+            document.getElementById('modalImageUrl').value = imageUrl; // Set hidden input
+
+            // Tampilkan gambar
+            const imgDisplay = document.getElementById('modalImageDisplay');
+            if (imageUrl && imageUrl !== 'null' && imageUrl !== '') {
+                imgDisplay.src = imageUrl;
+            } else {
+                imgDisplay.src = 'images/default-item.png'; // Fallback gambar
+            }
+            imgDisplay.classList.remove('hidden'); // Tampilkan gambar
+
+            // Reset & tampilkan modal
+            document.getElementById('modalStartDate').value = '';
+            document.getElementById('modalEndDate').value = '';
             document.getElementById('bookingModal').classList.remove('hidden');
         }
         
