@@ -221,4 +221,14 @@ public class UserDAO {
             return ps.executeUpdate() > 0;
         }
     }
+
+    // TOGGLE VERIFICATION - untuk admin mengubah status verifikasi pengguna
+    public boolean toggleVerification(String userId) throws SQLException {
+        String sql = "UPDATE users SET is_verified = NOT is_verified WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            return ps.executeUpdate() > 0;
+        }
+    }
 }

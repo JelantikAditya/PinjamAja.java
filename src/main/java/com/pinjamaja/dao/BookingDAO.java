@@ -36,7 +36,7 @@ public class BookingDAO {
                 b.put("id", rs.getString("id"));
                 b.put("ownerId", ownerId);
                 b.put("itemTitle", rs.getString("item_title"));
-                b.put("itemImageUrl", rs.getString("item_image_url"));
+                b.put("ImageUrl", rs.getString("image_url"));
                 b.put("borrowerName", rs.getString("borrower_name"));
                 b.put("startDate", rs.getDate("start_date").toString());
                 b.put("endDate", rs.getDate("end_date").toString());
@@ -80,33 +80,40 @@ public class BookingDAO {
 
     // === 3. GET BOOKINGS BY BORROWER ===
     public List<Map<String, Object>> getBookingsByBorrower(String borrowerId) throws SQLException {
-        List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT b.*, i.name as item_title, u.name as owner_name " +
+        List<Map<String, Object>> bookings = new ArrayList<>();
+        
+        // 🔥 JOIN items untuk ambil image_url
+        String sql = "SELECT b.id, i.name as itemTitle, i.image_url as ImageUrl, u.name as ownerName, " +
+                     "b.start_date as startDate, b.end_date as endDate, b.total_price as totalPrice, " +
+                     "b.status, b.payment_status as paymentStatus, b.created_at as requestDate " +
                      "FROM bookings b " +
-                     "JOIN items i ON b.item_id = i.id " +
-                     "JOIN users u ON i.owner_id = u.id " +
+                     "JOIN items i ON b.item_id = i.id " +  // JOIN ke items
+                     "JOIN users u ON i.owner_id = u.id " +  // JOIN ke users untuk nama owner
                      "WHERE b.borrower_id = ? " +
                      "ORDER BY b.created_at DESC";
-
+        
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
+            
             ps.setString(1, borrowerId);
             ResultSet rs = ps.executeQuery();
-
+            
             while (rs.next()) {
-                Map<String, Object> booking = new HashMap<>();
-                booking.put("id", rs.getString("id"));
-                booking.put("itemTitle", rs.getString("item_title"));
-                booking.put("ownerName", rs.getString("owner_name"));
-                booking.put("startDate", rs.getDate("start_date").toString());
-                booking.put("endDate", rs.getDate("end_date").toString());
-                booking.put("totalPrice", rs.getDouble("total_price"));
-                booking.put("status", rs.getString("status"));
-                list.add(booking);
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", rs.getString("id"));
+                map.put("itemTitle", rs.getString("itemTitle"));
+                map.put("ImageUrl", rs.getString("ImageUrl")); // Ambil dari items
+                map.put("ownerName", rs.getString("ownerName"));
+                map.put("startDate", rs.getDate("startDate"));
+                map.put("endDate", rs.getDate("endDate"));
+                map.put("totalPrice", rs.getDouble("totalPrice"));
+                map.put("status", rs.getString("status"));
+                map.put("paymentStatus", rs.getString("paymentStatus"));
+                map.put("requestDate", rs.getTimestamp("requestDate"));
+                bookings.add(map);
             }
         }
-        return list;
+        return bookings;
     }
 
     // === 4. UPDATE BOOKING STATUS ===
@@ -140,7 +147,7 @@ public class BookingDAO {
     // === 6. GET PENDING BOOKINGS (FOR OWNER) ===
     public List<Map<String, Object>> getPendingBookingsByOwner(String ownerId) throws SQLException {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT b.*, i.name as item_title, i.image_url as item_image_url, u.name as borrower_name " +
+        String sql = "SELECT b.*, i.name as item_title, i.image_url as image_url, u.name as borrower_name " +
                      "FROM bookings b " +
                      "JOIN items i ON b.item_id = i.id " +
                      "JOIN users u ON b.borrower_id = u.id " +
@@ -157,7 +164,7 @@ public class BookingDAO {
                 Map<String, Object> booking = new HashMap<>();
                 booking.put("id", rs.getString("id"));
                 booking.put("itemTitle", rs.getString("item_title"));
-                booking.put("itemImageUrl", rs.getString("item_image_url"));
+                booking.put("ImageUrl", rs.getString("image_url"));
                 booking.put("borrowerName", rs.getString("borrower_name"));
                 booking.put("startDate", rs.getDate("start_date").toString());
                 booking.put("endDate", rs.getDate("end_date").toString());

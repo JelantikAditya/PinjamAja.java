@@ -148,7 +148,10 @@
                 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
                     <div class="flex flex-col md:flex-row">
                         <div class="w-full md:w-64 h-48 md:h-auto relative shrink-0">
-                            <img src="<%= booking.get("itemImageUrl") %>" alt="<%= booking.get("itemTitle") %>" class="w-full h-full object-cover">
+                            <img src="<%= booking.get("ImageUrl") != null ? booking.get("ImageUrl") : "images/default-item.png" %>" 
+                                alt="<%= booking.get("itemTitle") %>" 
+                                class="w-full h-full object-cover"
+                            onerror="this.src='images/default-item.png'; this.alt='No Image Available';">
                         </div>
                         
                         <div class="flex-1 p-6 flex flex-col justify-between">
