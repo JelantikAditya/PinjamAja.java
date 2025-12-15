@@ -14,48 +14,42 @@ import com.pinjamaja.util.DBConnection;
 public class BookingDAO {
 
     // === 1. GET BOOKINGS BY OWNER ===
-   // === 1. GET BOOKINGS BY OWNER ===
-    public List<Map<String, Object>> getBookingMapsByOwner(String ownerId) throws SQLException {
-        List<Map<String, Object>> list = new ArrayList<>();
-        // Query SQL tetap sama (SELECT b.* akan mengambil semua kolom yang ada)
-        String sql = "SELECT b.*, i.name as item_title, i.image_url as item_image_url, u.name as borrower_name " +
+   public List<Map<String, Object>> getBookingMapsByOwner(String ownerId) throws SQLException {
+        List<Map<String, Object>> bookings = new ArrayList<>();
+        
+        // 🔥 FIX: JOIN items untuk ambil image_url
+        String sql = "SELECT b.id, i.name as itemTitle, i.image_url as itemImageUrl, " +
+                     "u.name as borrowerName, b.start_date as startDate, b.end_date as endDate, " +
+                     "b.total_price as totalPrice, b.status, b.payment_status as paymentStatus, " +
+                     "b.created_at as requestDate " +
                      "FROM bookings b " +
-                     "JOIN items i ON b.item_id = i.id " +
-                     "JOIN users u ON b.borrower_id = u.id " +
-                     "WHERE i.owner_id = ? " +
+                     "JOIN items i ON b.item_id = i.id " +  // JOIN ke items
+                     "JOIN users u ON b.borrower_id = u.id " +  // JOIN ke users
+                     "WHERE i.owner_id = ? " +  // Filter berdasarkan owner
                      "ORDER BY b.created_at DESC";
-
+        
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
+            
             ps.setString(1, ownerId);
             ResultSet rs = ps.executeQuery();
-
+            
             while (rs.next()) {
-                Map<String, Object> b = new HashMap<>();
-                b.put("id", rs.getString("id"));
-                b.put("ownerId", ownerId);
-                b.put("itemTitle", rs.getString("item_title"));
-                b.put("ImageUrl", rs.getString("image_url"));
-                b.put("borrowerName", rs.getString("borrower_name"));
-                b.put("startDate", rs.getDate("start_date").toString());
-                b.put("endDate", rs.getDate("end_date").toString());
-                b.put("totalPrice", rs.getDouble("total_price"));
-                b.put("status", rs.getString("status"));
-                
-                // --- PERBAIKAN: TRY-CATCH UNTUK MENGHINDARI ERROR JIKA KOLOM TIDAK ADA ---
-                try {
-                    b.put("paymentStatus", rs.getString("payment_status"));
-                } catch (SQLException e) {
-                    // Jika kolom tidak ada di database, default ke UNPAID agar tidak error
-                    b.put("paymentStatus", "UNPAID");
-                }
-                // -------------------------------------------------------------------------
-                
-                list.add(b);
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", rs.getString("id"));
+                map.put("itemTitle", rs.getString("itemTitle"));
+                map.put("itemImageUrl", rs.getString("itemImageUrl")); // Ambil dari items
+                map.put("borrowerName", rs.getString("borrowerName"));
+                map.put("startDate", rs.getDate("startDate"));
+                map.put("endDate", rs.getDate("endDate"));
+                map.put("totalPrice", rs.getDouble("totalPrice"));
+                map.put("status", rs.getString("status"));
+                map.put("paymentStatus", rs.getString("paymentStatus"));
+                map.put("requestDate", rs.getTimestamp("requestDate"));
+                bookings.add(map);
             }
         }
-        return list;
+        return bookings;
     }
 
     // === 2. CREATE BOOKING ===

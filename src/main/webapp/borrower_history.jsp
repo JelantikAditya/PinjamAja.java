@@ -76,7 +76,7 @@
                     <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
                         <div class="px-4 py-3 border-b border-gray-100 mb-2">
                             <p class="text-sm font-bold text-gray-900"><%= userName %></p>
-                            <p class="text-xs text-gray-500 truncate"><%= userEmail %></p>
+                            <p class="text-xs text-gray-500 truncate">Borrower - PinjamAja</p>
                         </div>
                         <form action="LogoutServlet" method="POST" class="px-4 py-2">
                             <button type="submit" class="flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left p-2 rounded">
@@ -147,11 +147,11 @@
                 
                 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
                     <div class="flex flex-col md:flex-row">
-                        <div class="w-full md:w-64 h-48 md:h-auto relative shrink-0">
+                       <div class="w-full md:w-64 h-48 relative shrink-0">
                             <img src="<%= booking.get("ImageUrl") != null ? booking.get("ImageUrl") : "images/default-item.png" %>" 
-                                alt="<%= booking.get("itemTitle") %>" 
-                                class="w-full h-full object-cover"
-                            onerror="this.src='images/default-item.png'; this.alt='No Image Available';">
+                                 alt="<%= booking.get("itemTitle") %>" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='images/default-item.png'; this.alt='No Image Available';">
                         </div>
                         
                         <div class="flex-1 p-6 flex flex-col justify-between">

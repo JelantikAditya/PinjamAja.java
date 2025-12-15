@@ -72,7 +72,7 @@
                     <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border py-2">
                         <div class="px-4 py-3 border-b">
                             <p class="text-sm font-bold"><%= userName %></p>
-                            <p class="text-xs text-gray-500"><%= session.getAttribute("userEmail") %></p>
+                            <p class="text-xs text-gray-500">Borrower - PinjamAja</p>
                         </div>
                         <form action="LogoutServlet" method="POST" class="px-4 py-2">
                             <button type="submit" class="flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 w-full text-left p-2 rounded">
