@@ -14,7 +14,6 @@ import com.pinjamaja.util.DBConnection;
 public class BarangDAO {
     
     // Ambil semua barang milik owner
-   // GET ALL BARANG BY OWNER ID
 public List<Map<String, Object>> getBarangMapsByOwner(String ownerId) throws SQLException {
     List<Map<String, Object>> list = new ArrayList<>();
     String sql = "SELECT id, name as title, category, description, price_per_day as pricePerDay, " +

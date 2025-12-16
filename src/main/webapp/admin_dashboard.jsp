@@ -280,7 +280,6 @@
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Pengguna (Pemilik / Peminjam)</th>
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Jumlah</th>
-                                        <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="[&_tr:last-child]:border-0">
@@ -313,11 +312,6 @@
                                             </div>
                                         </td>
                                         <td class="p-4 align-middle"><%= rpFormat.format(b.get("totalPrice")) %></td>
-                                        <td class="p-4 align-middle text-right">
-                                            <a href="BookingServlet?view=<%= b.get("id") %>" class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 w-10 hover:bg-accent hover:text-accent-foreground">
-                                                <i data-lucide="more-horizontal" class="w-4 h-4"></i>
-                                            </a>
-                                        </td>
                                     </tr>
                                     <% } %>
                                 </tbody>
@@ -339,7 +333,7 @@
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Email</th>
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Peran</th>
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-                                        <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Aksi</th>
+                                        <th class="h-12 px-4 text-center align-middle font-medium text-muted-foreground">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="[&_tr:last-child]:border-0">
@@ -361,7 +355,7 @@
                                                 <% } %>
                                             </td>
                                             <td class="p-4 align-middle text-right">
-                                                <div class="flex gap-2 justify-end">
+                                                <div class="flex gap-2 justify-center">
                                                     <form action="${pageContext.request.contextPath}/admin/user" method="POST" 
                                                             style="display:inline;" onsubmit="return confirm('Hapus akun ini? Tindakan tidak dapat dibatalkan.');">
                                                           <input type="hidden" name="action" value="delete">

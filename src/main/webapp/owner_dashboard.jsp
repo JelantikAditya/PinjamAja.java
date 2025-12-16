@@ -362,10 +362,7 @@
                                 <span class="text-sm text-gray-500"><%= item.get("category") %></span>
                                 <span class="font-bold text-primary"><%= rpFormat.format(item.get("pricePerDay")) %>/hari</span>
                             </div>
-                            <div class="mt-3 flex items-center gap-2 text-xs text-gray-400">
-                                <i data-lucide="star" class="w-3 h-3 text-yellow-400 fill-current"></i>
-                                <span><%= item.get("rating") %> (<%= item.get("reviewCount") %> ulasan)</span>
-                            </div>
+                            
                         </div>
                     </div>
                     <% } %>

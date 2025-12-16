@@ -25,7 +25,7 @@
             <version>8.0.33</version>
         </dependency>
         
-        <!-- Servlet API (Lebih Spesifik & Ringan) -->
+        <!-- Servlet API  -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -37,6 +37,12 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.15</version> 
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
         </dependency>
     </dependencies>
 

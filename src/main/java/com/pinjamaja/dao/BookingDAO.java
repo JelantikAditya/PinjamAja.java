@@ -17,7 +17,7 @@ public class BookingDAO {
    public List<Map<String, Object>> getBookingMapsByOwner(String ownerId) throws SQLException {
         List<Map<String, Object>> bookings = new ArrayList<>();
         
-        // 🔥 FIX: JOIN items untuk ambil image_url
+        // FIX: JOIN items untuk ambil image_url
         String sql = "SELECT b.id, i.name as itemTitle, i.image_url as itemImageUrl, " +
                      "u.name as borrowerName, b.start_date as startDate, b.end_date as endDate, " +
                      "b.total_price as totalPrice, b.status, b.payment_status as paymentStatus, " +

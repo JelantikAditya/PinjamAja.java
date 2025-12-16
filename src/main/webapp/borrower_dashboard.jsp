@@ -144,12 +144,6 @@
                         <h3 class="font-bold text-gray-900 line-clamp-1 mb-2 text-base"><%= item.get("title") %></h3>
                         <span class="text-gray-900 line-clamp-1 mb-2 text-base"><%= item.get("description") %></span>
                         
-                        <div class="flex items-center gap-1 text-yellow-500 text-xs mb-4">
-                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
-                            <span class="font-bold text-gray-900"><%= item.get("rating") %></span>
-                            <span class="text-gray-400 font-normal">(<%= item.get("reviewCount") %>)</span>
-                        </div>
-                        
                         <!-- TOMBOL SEWA & KERANJANG -->
                         <div class="flex gap-2 mt-auto pt-3 border-t border-gray-50">
                             <button onclick="openBookingModal('<%= item.get("id") %>', '<%= item.get("pricePerDay") %>', '<%= item.get("imageUrl") %>')"
@@ -226,7 +220,6 @@
                                    class="w-full h-10 rounded-lg border border-gray-300 px-3
                                           focus:ring-2 focus:ring-yellow-400">
                         </div>
-
                         <!-- BUTTON -->
                         <div class="flex gap-3 pt-6">
                             <button type="button"
@@ -235,7 +228,6 @@
                                            text-gray-700 hover:bg-gray-100 text-sm">
                                 Batal
                             </button>
-
                             <button type="submit"
                                     class="flex-1 h-10 rounded-lg bg-yellow-400
                                            font-semibold hover:bg-yellow-500 text-sm">
@@ -243,8 +235,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- RIGHT : IMAGE (TENGAH) -->
                     <div class="hidden md:flex w-2/5 bg-white items-center justify-center">
 
                         <div class="w-[85%] aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
